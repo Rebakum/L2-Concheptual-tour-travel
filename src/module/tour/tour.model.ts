@@ -1,6 +1,7 @@
 import { model, Schema } from 'mongoose'
+import TTourModel, { ITour, ITourMethods } from './tour.interface'
 
-const tourSchema = new Schema({
+const tourSchema = new Schema<ITour, TTourModel, ITourMethods>({
   name: {
     type: String,
     required: true,
@@ -22,8 +23,8 @@ const tourSchema = new Schema({
     required: true,
   },
   images: [String],
-  startDate: {
-    type: Date,
+  startDates: {
+    type: [Date],
     required: true,
   },
   startLocation: {
@@ -34,5 +35,39 @@ const tourSchema = new Schema({
     type: String,
   },
 })
-const Tour = model('Tour', tourSchema)
+// tourSchema.methods.getNextNearestStartDateAndEndDate = function () {
+//   const today = new Date()
+//   const futureDates = this.startDates.filter((startDate: Date) => {
+//     return startDate > today
+//   })
+//   futureDates.sort((a: Date, b: Date) => a.getTime() - b.getTime())
+//   const nearestStartDate = futureDates[0]
+//   const estimatedEndDate = new Date(
+//     nearestStartDate.getTime() + this.durationHours * 60 * 60 * 1000
+//   )
+//   return {
+//     nearestStartDate,
+//     estimatedEndDate,
+//   }
+// }
+tourSchema.static(
+  'getNextNearestStartDateAndEndDate',
+  function getNextNearestStartDateAndEndDate() {
+    const today = new Date()
+    const futureDates = this.startDates.filter((startDate: Date) => {
+      return startDate > today
+    })
+    futureDates.sort((a: Date, b: Date) => a.getTime() - b.getTime())
+    const nearestStartDate = futureDates[0]
+    const estimatedEndDate = new Date(
+      nearestStartDate.getTime() + this.durationHours * 60 * 60 * 1000
+    )
+    return {
+      nearestStartDate,
+      estimatedEndDate,
+    }
+  }
+)
+
+const Tour = model<ITour, TTourModel>('Tour', tourSchema)
 export default Tour

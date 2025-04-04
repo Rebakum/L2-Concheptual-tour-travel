@@ -57,7 +57,7 @@ const updateUser = async (req: Request, res: Response) => {
     const userId = req.params.userId
     const body = req.body
     const result = await userService.updateUser(userId, body)
-    console.log(result)
+
     res.send({
       status: 'true',
       message: 'User updated successfully',
