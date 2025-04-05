@@ -1,95 +1,57 @@
-import { Request, Response } from 'express'
+import { StatusCodes } from 'http-status-codes'
+
+import { catchAsync } from '../../utils/catchAsync'
+import sendResponse from '../../utils/sendResponse'
 import { userService } from './user.service'
 
 //Request and Response manage
-const createUser = async (req: Request, res: Response) => {
-  try {
-    const payload = req.body
-    const result = await userService.createUser(payload)
-    res.send({
-      status: 'true',
-      message: 'User created successfully',
-      data: result,
-    })
-  } catch (error) {
-    res.json({
-      status: 'false',
-      Message: 'User not created',
-      error: error,
-    })
-  }
-}
-const getAllUser = async (req: Request, res: Response) => {
-  try {
-    const result = await userService.getAllUser()
-    res.send({
-      status: 'true',
-      message: 'User recive successfully',
-      data: result,
-    })
-  } catch (error) {
-    res.json({
-      status: 'false',
-      Message: 'User not recive',
-      error: error,
-    })
-  }
-}
-const getSingleUser = async (req: Request, res: Response) => {
-  try {
-    const userId = req.params.userId
-    const result = await userService.getSingleUser(userId)
-    res.send({
-      status: 'true',
-      message: 'User recive successfully',
-      data: result,
-    })
-  } catch (error) {
-    res.json({
-      status: 'false',
-      Message: 'User not recive',
-      error: error,
-    })
-  }
-}
-const updateUser = async (req: Request, res: Response) => {
-  try {
-    const userId = req.params.userId
-    const body = req.body
-    const result = await userService.updateUser(userId, body)
+const createUser = catchAsync(async (req, res) => {
+  const payload = req.body
+  const result = await userService.createUser(payload)
+  sendResponse(res, {
+    statusCode: StatusCodes.CREATED,
+    message: 'User created successfully',
+    data: result,
+  })
+})
+const getAllUser = catchAsync(async (req, res) => {
+  const result = await userService.getAllUser()
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    message: 'User recive successfully',
+    data: result,
+  })
+})
+const getSingleUser = catchAsync(async (req, res) => {
+  const userId = req.params.userId
+  const result = await userService.getSingleUser(userId)
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    message: 'User recive successfully',
+    data: result,
+  })
+})
+const updateUser = catchAsync(async (req, res) => {
+  const userId = req.params.userId
+  const body = req.body
+  const result = await userService.updateUser(userId, body)
 
-    res.send({
-      status: 'true',
-      message: 'User updated successfully',
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    message: 'User updated successfully',
+    data: result,
+  })
+})
+const deleteUser = catchAsync(async (req, res) => {
+  const userId = req.params.userId
 
-      data: result,
-    })
-  } catch (error) {
-    res.json({
-      status: 'false',
-      Message: 'User not updated',
-      error: error,
-    })
-  }
-}
-const deleteUser = async (req: Request, res: Response) => {
-  try {
-    const userId = req.params.userId
-
-    const result = await userService.deleteUser(userId)
-    res.send({
-      status: 'true',
-      message: 'User deleted successfully',
-      data: result,
-    })
-  } catch (error) {
-    res.json({
-      status: 'false',
-      Message: 'User not deleted',
-      error: error,
-    })
-  }
-}
+  const result = await userService.deleteUser(userId)
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    message: 'User deleted successfully',
+    data: result,
+  })
+})
 export const userController = {
   createUser,
   getAllUser,

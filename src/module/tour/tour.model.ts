@@ -18,6 +18,10 @@ const tourSchema = new Schema<ITour, TTourModel, ITourMethods>({
     type: Number,
     required: true,
   },
+  availableSeats: {
+    type: Number,
+    required: true,
+  },
   coverImage: {
     type: String,
     required: true,
@@ -51,17 +55,21 @@ const tourSchema = new Schema<ITour, TTourModel, ITourMethods>({
 //   }
 // }
 tourSchema.static(
-  'getNextNearestStartDateAndEndDate',
-  function getNextNearestStartDateAndEndDate() {
+  'getNextNearestStartDateAndEndData',
+  function getNextNearestStartDateAndEndData() {
     const today = new Date()
+
     const futureDates = this.startDates.filter((startDate: Date) => {
       return startDate > today
     })
-    futureDates.sort((a: Date, b: Date) => a.getTime() - b.getTime())
+
+    futureDates.sort((a: Date, b: Date) => a.getTime() - b.getDate())
+
     const nearestStartDate = futureDates[0]
     const estimatedEndDate = new Date(
       nearestStartDate.getTime() + this.durationHours * 60 * 60 * 1000
     )
+
     return {
       nearestStartDate,
       estimatedEndDate,

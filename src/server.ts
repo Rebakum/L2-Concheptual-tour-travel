@@ -12,5 +12,5 @@ function server() {
     console.error('Error connecting to the database: ', error)
   }
 }
-console.log('mongodb:', config.database_url)
+
 server()
